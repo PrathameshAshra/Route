@@ -11,11 +11,16 @@ const FINISH_NODE_COL =   5;
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  grid: any;
+  state: any;
   visitedNodesInOrder: any;
   nodesInShortestPathOrder: any;
 
-  constructor() { }
+  constructor() {
+    this.state = {
+      grid: [],
+      mouseIsPressed: false,
+    };
+   }
 
   getInitialGrid = () => {
     const grid = [];
@@ -38,6 +43,7 @@ export class AppComponent implements OnInit{
     isWall: false,
     previousNode: null,
   })
+
   animateDijkstra(visitedNodesInOrder: any, nodesInShortestPathOrder: any): any {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
@@ -47,33 +53,47 @@ export class AppComponent implements OnInit{
         return;
       }
       setTimeout(() => {
-          const node = visitedNodesInOrder[i];
-          this.grid[node.row][node.col].isVisited = true;
-        }, i * 10);
+        const node = visitedNodesInOrder[i];
+        this.state.grid[node.row][node.col].isChecked = true;
+              // document.getElementById(`node-${node.row}-${node.col}`).className =
+        //   'node node-visited';
+      }, 10 * i);
     }
   }
+
   animateShortestPath(nodesInShortestPathOrder: any): any {
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
-        console.log(node);
-        this.grid[node.row][node.col].isShortest = true;
+        this.state.grid[node.row][node.col].isShortest = true;
+        //   'node ';
       }, 50 * i);
     }
   }
 
+  visualizeDijkstra(): any {
+    const {grid} = this.state;
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  onCellClick(cell: any, i: any, j: any): void{
+    if ((i === START_NODE_ROW && j === START_NODE_COL) || (i === FINISH_NODE_ROW && j === FINISH_NODE_COL)) {
+      alert('starting Element cant be blocked');
+    }else{
+      this.state.grid[i][j].isWall = !this.state.grid[i][j].isWall;
+
+    }
+
+  }
+  clearGraph(): void{
+    this.state.grid = this.getInitialGrid();
+
+  }
   ngOnInit(): void {
-    this.grid = this.getInitialGrid();
-  }
-  // tslint:disable-next-line: typedef
-  render(){
-     this.visitedNodesInOrder = dijkstra(this.grid, this.grid[START_NODE_ROW][START_NODE_COL], this.grid[FINISH_NODE_ROW][FINISH_NODE_COL]);
-    // const nodesInShortestPathOrder = getNodesInShortestPathOrder(this.grid[FINISH_NODE_ROW][FINISH_NODE_COL]);
-    // this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-  }
-  // tslint:disable-next-line: typedef
-  shortest(){
-    const nodesInShortestPathOrder = getNodesInShortestPathOrder(this.grid[FINISH_NODE_ROW][FINISH_NODE_COL]);
-    this.animateDijkstra(this.visitedNodesInOrder, nodesInShortestPathOrder);
+    this.state.grid = this.getInitialGrid();
   }
 }

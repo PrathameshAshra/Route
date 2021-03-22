@@ -10,6 +10,9 @@
   .node-start {
     background-color: green;
   }
+  .node-blocked{
+    background-color: darkcyan;
+  }
   .node-visited {
     animation-name: visitedAnimation;
     animation-duration: 2s;

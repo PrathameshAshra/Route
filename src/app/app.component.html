@@ -1,10 +1,13 @@
 <div class="container-fluid">
-  <button (click)="render()">Render</button>
-  <button (click)="shortest()">Shortest</button>
+  <div class="top_nav">
+    <h1>Project</h1>
+  </div>
+<button (click)='visualizeDijkstra()'>RUN</button>
+<button (click)='clearGraph()'>Clear</button>
   <div class="wrapper">
-    <div class="row"*ngFor='let cols of grid, let i = index'>
+    <div class="row"*ngFor='let cols of state.grid, let i = index'>
       <div class="cols" *ngFor='let row of cols, let j = index'>
-        <app-node [block]='grid[i][j]'   ></app-node>
+        <app-node  [block]='state.grid[i][j]' (click)='onCellClick(state.grid[i][j], i , j)' ></app-node>
       </div>
     </div>
   </div>
